@@ -1,4 +1,5 @@
 
+
 import telebot
 from telebot import types
 import sqlite3
@@ -6,21 +7,22 @@ import random
 import string
 import time
 
-TOKEN = "8183361179:AAE_wUvCa8P8M9GjHrtP59yF6riEJTlE-xU" # Замените на свой токен
+TOKEN = "8183361179:AAE_wUvCa8P8M9GjHrtP59yF6riEJTlE-xU"  
 
-SUPPORT_GROUP_ID = -1002295310441   # Замените на ID вашей группы поддержки
+SUPPORT_GROUP_ID = -1002295310441 
 
 BOT_PROFILE_PHOTO_URL = "https://imgur.com/a/7TXTdQa"
 ADMIN_TOOL_PHOTO_URL = "https://imgur.com/a/Nrcv8aB"
+START_PHOTO_URL = "https://imgur.com/a/B7GBKXZ"  
 
 bot = telebot.TeleBot(TOKEN)
 
 user_states = {}
 active_questions = {}
 support_stats = {}
-ADMIN_IDS = [6714876522, 6920224572, 6529408254, 1033086078, 5418830185, 7412804687, 7534903812, 7085703705, 7035792901, 6632430184, 7828729512, 6869443741]
+ADMIN_IDS = [6714876522, 6578747825]
 ADMIN_IDS = set(ADMIN_IDS)
-DATABASE_FILE = 'support_bot.db'
+DATABASE_FILE = 'gfgggggg.db'
 
 
 def create_tables():
@@ -45,6 +47,14 @@ def create_tables():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS blocked_users (
             user_id INTEGER PRIMARY KEY
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS support_profiles (
+            user_id INTEGER PRIMARY KEY,
+            username TEXT,
+            first_name TEXT,
+            last_name TEXT
         )
     ''')
 
@@ -187,17 +197,33 @@ def start(message):
     markup = telebot.types.ReplyKeyboardMarkup(resize_keyboard=True)
     item1 = telebot.types.KeyboardButton("🍇Задать вопрос поддержке")
     markup.add(item1)
-    bot.send_message(message.chat.id, "🍇Привет! Чем могу помочь?",
+    bot.send_photo(message.chat.id, START_PHOTO_URL, "🍇Привет! Чем могу помочь?",
                    reply_markup=markup)
     add_user_to_db(message.from_user.id)
     if message.from_user.id in ADMIN_IDS:
         bot.send_message(message.from_user.id, "🍇Приветствую саппорт! Для просмотра админ меню отправьте /admin")
+        add_or_update_support_profile(message.from_user)
+
+
+def add_or_update_support_profile(user):
+    conn = sqlite3.connect(DATABASE_FILE)
+    cursor = conn.cursor()
+    try:
+        cursor.execute("INSERT OR REPLACE INTO support_profiles (user_id, username, first_name, last_name) VALUES (?, ?, ?, ?)",
+                       (user.id, user.username, user.first_name, user.last_name))
+        conn.commit()
+    except Exception as e:
+        print(f"🍇Ошибка при добавлении/обновлении профиля саппорта: {e}")
+    finally:
+        conn.close()
+
 
 
 @bot.message_handler(func=lambda message: message.text == "🍇Задать вопрос поддержке")
 def ask_support(message):
     user_states[message.chat.id] = "waiting_for_question"
     bot.send_message(message.chat.id, "🍇Отправьте мне вопрос, который хотите задать поддержке:")
+
 
 @bot.message_handler(commands=['admin'])
 def admin_command(message):
@@ -212,6 +238,11 @@ def admin_command(message):
     content_types=['photo', 'text', 'video', 'document'])
 def handle_support_message(message):
     user_id = message.chat.id
+    if user_id in blocked_users:
+        bot.send_message(user_id, "🍇Вы заблокированы и не можете задавать вопросы.")
+        del user_states[message.chat.id]
+        return
+
     username = message.from_user.username
     if username is None:
         username = "Не указан"
@@ -263,13 +294,15 @@ def handle_answer_input(message):
         print(f"🍇Ошибка при обработке ответа: {e}")
         bot.send_message(message.chat.id, "🍇Произошла ошибка при отправке ответа.")
     del user_states[message.chat.id]
-    
+
+
 @bot.message_handler(func=lambda message: message.chat.type in ['group', 'supergroup'] and message.text == "/")
 def handle_slash_command(message):
     markup = types.InlineKeyboardMarkup()
     item1 = types.InlineKeyboardButton("🍇A:Tool", callback_data='group_A_Tool')
     markup.add(item1)
     bot.send_message(message.chat.id, "🍇Выберите команду:", reply_markup=markup)
+
 
 @bot.callback_query_handler(func=lambda call: call.data == 'group_A_Tool')
 def group_A_Tool_callback(call):
@@ -284,14 +317,17 @@ def admin_tool(message):
     item1 = types.InlineKeyboardButton("🍇Отправить сообщение всем", callback_data='send_all')
     item2 = types.InlineKeyboardButton("🍇Заблокировать человека", callback_data='block_user')
     item3 = types.InlineKeyboardButton("🍇Разблокировать человека", callback_data='unblock_user')
+    item4 = types.InlineKeyboardButton("🍇Мой профиль", callback_data='my_profile')
     markup.row(item1)
     markup.row(item2)
     markup.row(item3)
+    markup.row(item4)
     bot.send_photo(message.chat.id, ADMIN_TOOL_PHOTO_URL, "🍇Выберите действие:",
                    reply_markup=markup)
 
+
 @bot.callback_query_handler(
-    func=lambda call: call.data in ['send_all', 'block_user', 'unblock_user'])
+    func=lambda call: call.data in ['send_all', 'block_user', 'unblock_user', 'my_profile'])
 def callback_inline(call):
     if call.data == 'send_all':
         bot.answer_callback_query(call.id, "🍇Зайдите в личные сообщения с ботом")
@@ -303,7 +339,34 @@ def callback_inline(call):
     elif call.data == 'unblock_user':
         user_states[call.message.chat.id] = "waiting_unblock_user"
         bot.send_message(call.message.chat.id, "🍇Введите ID или username пользователя для разблокировки:")
+    elif call.data == 'my_profile':
+        show_support_profile(call.from_user, call.message)
 
+
+def show_support_profile(user, message):
+    user_id = user.id
+    try:
+        conn = sqlite3.connect(DATABASE_FILE)
+        cursor = conn.cursor()
+        cursor.execute("SELECT username, first_name, last_name FROM support_profiles WHERE user_id = ?", (user_id,))
+        profile_data = cursor.fetchone()
+        conn.close()
+        if profile_data:
+            username = profile_data[0] if profile_data[0] else "Не указан"
+            first_name = profile_data[1] if profile_data[1] else "Не указан"
+            last_name = profile_data[2] if profile_data[2] else "Не указан"
+            profile_text = f"🍇Профиль саппорта\n🍇ID: {user_id}\n🍇Юзернейм: @{username}\n🍇Имя: {first_name}\n🍇Фамилия: {last_name}\n"
+            if user_id in support_stats:
+                profile_text += f"🍇Отвечено на вопросов: {support_stats[user_id]['answered_count']}"
+            else:
+                profile_text += f"🍇Отвечено на вопросов: 0"
+
+            bot.send_photo(message.chat.id, BOT_PROFILE_PHOTO_URL, profile_text)
+        else:
+            bot.send_message(message.chat.id, "🍇Произошла ошибка при получении вашего профиля")
+    except Exception as e:
+        bot.send_message(message.chat.id, "🍇Произошла ошибка при получении вашего профиля")
+        print(f"🍇Ошибка в профиле саппорта: {e}")
 
 
 @bot.message_handler(
@@ -426,4 +489,4 @@ while True:
         bot.polling(none_stop=True)
     except Exception as e:
         print(f"🍇Бот упал с ошибкой: {e}")
-        time.sleep(1) 
+        time.sleep(1)  
