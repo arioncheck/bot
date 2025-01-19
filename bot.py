@@ -1,12 +1,14 @@
+
 import telebot
 from telebot import types
 import sqlite3
 import random
 import string
+import time
 
-TOKEN = "8183361179:AAE_wUvCa8P8M9GjHrtP59yF6riEJTlE-xU" 
+TOKEN = "8183361179:AAE_wUvCa8P8M9GjHrtP59yF6riEJTlE-xU" # Замените на свой токен
 
-SUPPORT_GROUP_ID = -1002295310441  
+SUPPORT_GROUP_ID = -1002295310441   # Замените на ID вашей группы поддержки
 
 BOT_PROFILE_PHOTO_URL = "https://imgur.com/a/7TXTdQa"
 ADMIN_TOOL_PHOTO_URL = "https://imgur.com/a/Nrcv8aB"
@@ -162,10 +164,10 @@ def send_to_support(message, user_id, username):
                                                                          callback_data=f'answer_question_{question_id}')))
         else:
             sent_message = bot.send_message(SUPPORT_GROUP_ID,
-                                            f"🍇Вопрос #{question_id}\n🍇Текст: {message.text}\n🍇Юзернейм: @{username}\n🍇ID: {user_id}",
-                                            reply_markup=types.InlineKeyboardMarkup().add(
-                                                types.InlineKeyboardButton("🍇Ответить",
-                                                                           callback_data=f'answer_question_{question_id}')))
+                                                f"🍇Вопрос #{question_id}\n🍇Текст: {message.text}\n🍇Юзернейм: @{username}\n🍇ID: {user_id}",
+                                                reply_markup=types.InlineKeyboardMarkup().add(
+                                                    types.InlineKeyboardButton("🍇Ответить",
+                                                                               callback_data=f'answer_question_{question_id}')))
 
         active_questions[question_id] = {
             'user_id': user_id,
@@ -186,7 +188,7 @@ def start(message):
     item1 = telebot.types.KeyboardButton("🍇Задать вопрос поддержке")
     markup.add(item1)
     bot.send_message(message.chat.id, "🍇Привет! Чем могу помочь?",
-                     reply_markup=markup)
+                   reply_markup=markup)
     add_user_to_db(message.from_user.id)
     if message.from_user.id in ADMIN_IDS:
         bot.send_message(message.from_user.id, "🍇Приветствую саппорт! Для просмотра админ меню отправьте /admin")
@@ -196,7 +198,6 @@ def start(message):
 def ask_support(message):
     user_states[message.chat.id] = "waiting_for_question"
     bot.send_message(message.chat.id, "🍇Отправьте мне вопрос, который хотите задать поддержке:")
-
 
 @bot.message_handler(commands=['admin'])
 def admin_command(message):
@@ -262,15 +263,13 @@ def handle_answer_input(message):
         print(f"🍇Ошибка при обработке ответа: {e}")
         bot.send_message(message.chat.id, "🍇Произошла ошибка при отправке ответа.")
     del user_states[message.chat.id]
-
-
+    
 @bot.message_handler(func=lambda message: message.chat.type in ['group', 'supergroup'] and message.text == "/")
 def handle_slash_command(message):
     markup = types.InlineKeyboardMarkup()
     item1 = types.InlineKeyboardButton("🍇A:Tool", callback_data='group_A_Tool')
     markup.add(item1)
     bot.send_message(message.chat.id, "🍇Выберите команду:", reply_markup=markup)
-
 
 @bot.callback_query_handler(func=lambda call: call.data == 'group_A_Tool')
 def group_A_Tool_callback(call):
@@ -285,17 +284,14 @@ def admin_tool(message):
     item1 = types.InlineKeyboardButton("🍇Отправить сообщение всем", callback_data='send_all')
     item2 = types.InlineKeyboardButton("🍇Заблокировать человека", callback_data='block_user')
     item3 = types.InlineKeyboardButton("🍇Разблокировать человека", callback_data='unblock_user')
-    item4 = types.InlineKeyboardButton("🍇Мой профиль", callback_data='my_profile')
     markup.row(item1)
     markup.row(item2)
     markup.row(item3)
-    markup.row(item4)
     bot.send_photo(message.chat.id, ADMIN_TOOL_PHOTO_URL, "🍇Выберите действие:",
                    reply_markup=markup)
 
-
 @bot.callback_query_handler(
-    func=lambda call: call.data in ['send_all', 'block_user', 'unblock_user', 'my_profile'])
+    func=lambda call: call.data in ['send_all', 'block_user', 'unblock_user'])
 def callback_inline(call):
     if call.data == 'send_all':
         bot.answer_callback_query(call.id, "🍇Зайдите в личные сообщения с ботом")
@@ -307,25 +303,7 @@ def callback_inline(call):
     elif call.data == 'unblock_user':
         user_states[call.message.chat.id] = "waiting_unblock_user"
         bot.send_message(call.message.chat.id, "🍇Введите ID или username пользователя для разблокировки:")
-    elif call.data == 'my_profile':
-        show_support_profile(call.from_user, call.message)
 
-
-def show_support_profile(user, message):
-    user_id = user.id
-    try:
-        user_data = bot.get_chat(user_id)
-        username = user_data.username if user_data.username else "Не указан"
-        profile_text = f"🍇Профиль саппорта\n🍇ID: {user_id}\n🍇Юзернейм: @{username}\n"
-        if user_id in support_stats:
-            profile_text += f"🍇Отвечено на вопросов: {support_stats[user_id]['answered_count']}"
-        else:
-            profile_text += f"🍇Отвечено на вопросов: 0"
-
-        bot.send_photo(message.chat.id, BOT_PROFILE_PHOTO_URL, profile_text)
-    except Exception as e:
-        bot.send_message(message.chat.id, "🍇Произошла ошибка при получении вашего профиля")
-        print(f"🍇Ошибка в профиле саппорта: {e}")
 
 
 @bot.message_handler(
@@ -442,4 +420,10 @@ for question_id in answered_questions:
         active_questions[question_id]['answered'] = True
 
 print('Бот запущен')
-bot.polling(none_stop=True)
+
+while True:
+    try:
+        bot.polling(none_stop=True)
+    except Exception as e:
+        print(f"🍇Бот упал с ошибкой: {e}")
+        time.sleep(1) 
