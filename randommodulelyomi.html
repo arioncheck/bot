@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Module Code</title>
+    <style>
+         body {
+            margin: 0;
+            font-family: monospace;
+            background-image: url('https://i.imgur.com/XCBlWR6_d.webp?maxwidth=1520&fidelity=grand');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+         .menu-bar {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 150px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 5px 0 0 5px;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            z-index: 2;
+        }
+        .menu-bar:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+        .menu-container {
+            position: fixed;
+            right: -200px;
+            top: 0;
+            height: 100%;
+            width: 200px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 10px 0 0 10px;
+            transition: right 0.3s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            z-index: 3;
+        }
+        .menu-container.open {
+            right: 0;
+        }
+        .menu-items {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 10px;
+        }
+        .menu-item {
+            padding: 10px 15px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .code-container {
+            max-width: 800px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            line-height: 1.5;
+        }
+        .code-container pre {
+            white-space: pre-wrap;
+        }
+        .code-container pre > span::before {
+            content: attr(data-line-number) ' ';
+            color: gray;
+            margin-right: 10px;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-bar" id="menuBar"></div>
+    <div class="menu-container" id="menuContainer">
+        <div class="menu-items">
+            <div class="menu-item" onclick="location.href='index.html'; toggleMenu();">index.html</div>
+            <div class="menu-item" onclick="location.href='module.html'; toggleMenu();">modules</div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="content">
+            <div class="code-container">
+                <pre id="codeContent">
+1  // Этот код - пример
+2  // Он показывает, как работает
+3  // функция print
+4  function print(text) {
+5   console.log(text);
+6  }
+7  print("Hello, world!");
+                </pre>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuBar = document.getElementById('menuBar');
+            const menuContainer = document.getElementById('menuContainer');
+            menuBar.onclick = function() {
+                toggleMenu();
+           }
+           function toggleMenu() {
+                menuContainer.classList.toggle('open');
+           }
+            document.addEventListener('click', function (event) {
+               if (!menuContainer.contains(event.target) && !menuBar.contains(event.target) && menuContainer.classList.contains('open')) {
+                   toggleMenu();
+               }
+           });
+           const codeContent = document.getElementById('codeContent');
+           const lines = codeContent.innerHTML.trim().split('\n');
+           let numberedCode = '';
+           for (let i = 0; i < lines.length; i++) {
+              numberedCode += `<span data-line-number="${i + 1}">${lines[i]}</span>\n`;
+           }
+           codeContent.innerHTML = numberedCode;
+        });
+    </script>
+</body>
+</html>
