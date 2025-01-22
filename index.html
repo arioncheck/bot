@@ -17,495 +17,211 @@
             position: relative;
             overflow-x: hidden;
         }
+    
+        .main-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-        .burger-menu {
+        .content-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid #666666;
+            margin: 0 15px;
+            position: relative;
+            backdrop-filter: blur(10px);
+            width: 700px;
+            overflow: hidden;
+             display: flex;
+             flex-direction: column;
+        }
+
+        .profile-photo {
+            display: block;
+            max-width: 250px;
+            height: auto;
+            margin: 0 auto;
+            border-radius: 10px;
+            z-index: 2;
+            position: relative;
+            border: 1px solid #666666;
+            max-height: 170px;
+            box-shadow: 0 0 10px black;
+            transition: transform 0.2s ease;
+        }
+        .profile-photo:active {
+            transform: scale(1.05);
+        }
+         .line-left {
+            position: absolute;
+            height: 1px;
+            width: calc(50% - 20px);
+            background-color: #666666;
+            top: calc(170px / 2 + 15px + 50px);
+            left: 0px;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+
+        .line-right {
+            position: absolute;
+            height: 1px;
+            width: calc(50% - 20px);
+            background-color: #666666;
+            top:  calc(170px / 2 + 15px + 50px);
+            right: 0px;
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        .profile-photo::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 50%;
+          background: linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(0,0,0,0));
+           z-index: 3;
+            pointer-events: none;
+            border-radius: 10px 10px 0px 0px;
+        }
+
+        .profile-title {
+            text-align: center;
+            margin: 15px 0 5px 0;
+            color: #868686;
+        }
+
+        .profile-text {
+            text-align: center;
+        }
+
+         .image-background {
+            position: absolute;
+             top: 0;
+             left: 0;
+              width: 100%;
+             height: calc(170px/2 + 15px + 50px);
+            z-index: 0;
+            object-fit: cover;
+            object-position: top center;
+             border-radius: 10px 10px 0px 0px;
+        }
+
+        .time-container {
             position: fixed;
             top: 20px;
-            right: 20px;
-            cursor: pointer;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 5px 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
             z-index: 100;
+            border: 1px solid #fff;
+            transition: transform 0.1s ease;
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            user-select: none;
+             -webkit-user-select: none;
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .sound-control-container {
+            position: fixed;
+            top: 20px;
+            left: 120px;
             background-color: rgba(0, 0, 0, 0.8);
             padding: 5px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            z-index: 100;
             border: 1px solid #fff;
-            transition: transform 0.1s ease;
             background-color: rgba(255, 255, 255, 0.05);
+            transition: transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
             user-select: none;
             -webkit-user-select: none;
+            height: 40px;
+             outline: none;
         }
+          .sound-control-container:focus {
+            outline: none;
+          }
 
-        .menu-icon div {
-            width: 30px;
-            height: 3px;
-            background-color: #fff;
-            margin: 6px 0;
-            transition: 0.4s;
+        .sound-control-container img {
+            width: 20px;
+            height: 20px;
+             pointer-events: none;
+             user-select: none;
+             -webkit-user-select: none;
         }
-
-        .menu-container {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            width: 0;
-            max-height: calc(100vh - 30px);
-            background-color: rgba(255, 255, 255, 0.05);
-            overflow-x: hidden;
-            transition: width 0.4s ease;
-            z-index: 101;
-            padding: 15px 0px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-
-        .menu-container.active {
-            width: 300px;
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .menu-content {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 0 10px;
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .menu-btn {
-            background-color: #2c2c2c;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-            display: block;
-            background-color: rgba(255, 255, 255, 0.05);
-        }
-
-.menu-btn:hover {
-    background-color: #555;
-    background-color: rgba(255, 255, 255, 0.05);
-}
-
-.main-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.content-container {
-    background-color: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 15px;
-    border: 1px solid #666666;
-    margin: 0 15px;
-    position: relative;
-    backdrop-filter: blur(10px);
-    width: 700px;
-    overflow: hidden;
-}
-
-.profile-photo {
-    display: block;
-    max-width: 250px;
-    height: auto;
-    margin: 0 auto;
-    border-radius: 10px;
-    z-index: 2;
-    position: relative;
-    border: 1px solid #666666;
-    max-height: 170px;
-    box-shadow: 0 0 10px black;
-    transition: transform 0.2s ease;
-
-}
-.profile-photo:active {
-    transform: scale(1.05);
-}
-.line-left {
-    position: absolute;
-    height: 1px;
-    width: calc(50% - 20px);
-    background-color: #666666;
-    top: 50%;
-    left: 0px;
-    transform: translateY(-50%);
-    z-index: 1;
-}
-
-.line-right {
-    position: absolute;
-    height: 1px;
-    width: calc(50% - 20px);
-    background-color: #666666;
-    top: 50%;
-    right: 0px;
-    transform: translateY(-50%);
-    z-index: 1;
-}
-
-.profile-photo::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 50%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(0,0,0,0));
-   z-index: 3;
-    pointer-events: none;
-  border-radius: 10px 10px 0px 0px
-}
-
-.profile-title {
-    text-align: center;
-    margin: 15px 0 5px 0;
-    color: #868686;
-}
-
-.profile-text {
-    text-align: center;
-}
-
-.modules-container {
-    padding: 20px;
-            margin-top: 80px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .module-item {
-          background-color: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 10px;
-            position: relative;
-            backdrop-filter: blur(10px);
-            border: 1px solid #666666;
-            width: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            transition: transform 0.1s ease;
-        }
-
-        .module-header {
-          text-align: center;
-          margin: 5px;
-          flex-grow: 1;
-        }
-        .module-actions {
-          display: flex;
-          gap: 5px;
-          margin-right: 10px;
-        }
-
-
-        .module-actions button {
-            background-color: #555;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .module-actions button:hover {
-            background-color: #666;
-        }
-
-
-        .code-container {
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 10px 20px;
-            border-radius: 15px;
-            border: 1px solid #666666;
-            margin: 80px 15px 15px 15px;
-            backdrop-filter: blur(10px);
-        }
-
-.code-header {
-    text-align: center;
-    margin: 10px;
-}
-
-.code-line {
-    height: 1px;
-    background-color: #fff;
-    margin: 10px 0;
-}
-
-.code-wrapper {
-  padding-top: 1px;
-}
-
-.code {
-    overflow-x: auto;
-    white-space: pre-wrap;
-    line-height: 1.5;
-    padding: 0;
-    margin: 0;
-}
-
-.code pre {
-    margin: 0;
-    padding: 0;
-    line-height: 1.2;
-}
-
-.code-line-number {
-    display: inline-block;
-    color: gray;
-    margin-right: 5px;
-    pointer-events: none;
-    user-select: none;
-}
-
-.code-line-text {
-     display: inline-block;
-     vertical-align: top;
-}
-
-.image-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 50%;
-    z-index: 0;
-    border-radius: 10px;
-    object-fit: cover;
-    object-position: top center;
-}
-
-.time-container {
-    position: fixed;
-    top: 20px;
-    left: 20px;
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 5px 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    z-index: 100;
-    border: 1px solid #fff;
-    transition: transform 0.1s ease;
-    background-color: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-    user-select: none;
-     -webkit-user-select: none;
-}
-
-.sound-control-container {
-    position: fixed;
-    top: 20px;
-    left: 120px;
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 5px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    cursor: pointer;
-    z-index: 100;
-    border: 1px solid #fff;
-     background-color: rgba(255, 255, 255, 0.05);
-    transition: transform 0.1s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(10px);
-    user-select: none;
-     -webkit-user-select: none;
-}
-
-.sound-control-container img {
-    width: 20px;
-    height: 20px;
-}
-</style>
+    </style>
 </head>
 <body>
-<div class="sound-control-container" onclick="toggleSound(event)">
+<div class="sound-control-container" onclick="toggleSound(event)"  tabindex="0">
 <img id="sound-icon" src="https://0x0.st/s/-q109pyaDBT7eN_218LYLA/8H5f.png" alt="Sound On">
 </div>
 <div class="time-container">
 <span id="current-time"></span>
 </div>
-<div class="burger-menu">
-<div class="menu-icon">
-  <div></div>
-  <div></div>
-  <div></div>
-</div>
-</div>
-
-<div class="menu-container">
-<div class="menu-content">
- <button class="menu-btn" onclick="showBio(); closeMenu()">Bio</button>
-  <button class="menu-btn" onclick="showModules(); closeMenu()">Modules</button>
-</div>
-</div>
 
 <div class="main-container" id="bio-container">
 <div class="content-container">
-  <img src="https://0x0.st/s/BYUCRyScF7joBPlyEdE3yg/8H5A.jpg" class="profile-photo" alt="Profile Photo">
-   <img src="https://0x0.st/s/7m4JZV86oqAZ73I7WyxrKg/8H5b.jpg" class="image-background" alt="Profile Photo">
-    <div class="line-left"></div>
-    <div class="line-right"></div>
-   <h1 class="profile-title">About me:</h1>
-    <p class="profile-text">
-        Nickname: arioncheck <br>Hobbie: coding
-    </p>
-</div>
-</div>
-
-<div class="modules-container" id="modules-container" style="display: none;">
-<div class="module-item">
-<div class="module-header">
-    Random module lyomi
-</div>
-<div class="module-actions">
-  <button onclick="copyText('.dlm https://raw.githubusercontent.com/arion14888/modules/refs/heads/main/randommodulelyomi.py')">Copy</button>
-  <button onclick="showCode()">View Code</button>
-</div>
-</div>
-</div>
-
-<div class="code-container" id="code-container" style="display: none;">
-<div class="code-header">
-    Random module lyomi
-</div>
-<div class="code-line"></div>
-  <div class="code-wrapper">
-     <div class="code">
-       <pre id="code-pre">
-       </pre>
-     </div>
-   </div>
-</div>
-<audio id="background-music" loop>
-<source src="amamam.mp3" type="audio/mpeg">
-</audio>
-<script>
-const burgerMenu = document.querySelector('.burger-menu');
-const menuContainer = document.querySelector('.menu-container');
-const timeContainer = document.querySelector('.time-container');
-const soundControlContainer = document.querySelector('.sound-control-container');
-const bioContainer = document.getElementById('bio-container');
- const modulesContainer = document.getElementById('modules-container');
-  const codeContainer = document.getElementById('code-container');
-let isSoundOn = false;
-let musicStartTime = 0;
-const backgroundMusic = document.getElementById('background-music');
- const soundIcon = document.getElementById('sound-icon');
-
-function updateTime() {
-    const now = new Date();
-    const timeString = now.toLocaleTimeString();
-    document.getElementById('current-time').textContent = timeString;
-}
-
-updateTime();
-setInterval(updateTime, 1000);
-
-burgerMenu.addEventListener('click', () => {
-    menuContainer.classList.toggle('active');
-});
-
-document.addEventListener('click', (event) => {
-    if (!menuContainer.contains(event.target) && !burgerMenu.contains(event.target) && menuContainer.classList.contains('active')) {
-        menuContainer.classList.remove('active');
-    }
-});
-
-  function showBio() {
-     bioContainer.style.display = 'flex';
-     modulesContainer.style.display = 'none';
-     codeContainer.style.display = 'none';
-}
-
-function showModules() {
-  bioContainer.style.display = 'none';
-    modulesContainer.style.display = 'flex';
-     codeContainer.style.display = 'none';
-}
-
- function closeMenu() {
-    menuContainer.classList.remove('active');
-}
-
-  function showCode() {
-      bioContainer.style.display = 'none';
-    modulesContainer.style.display = 'none';
-      codeContainer.style.display = 'block';
-       fetch("https://raw.githubusercontent.com/arion14888/modules/refs/heads/main/randommodulelyomi.py")
-            .then(response => response.text())
-             .then(code => {
-                  const cleanedCode = removeLeadingWhitespace(code);
-                  const preElement = document.getElementById('code-pre');
-                  const lines = cleanedCode.split('\n');
-                  let numberedCode = '';
-                  for (let i = 0; i < lines.length; i++) {
-                    numberedCode += `<span class="code-line-number">${i+ 1}.</span><span class="code-line-text">${lines[i]}</span><br>`;
-                          }
-                         preElement.innerHTML = numberedCode;
-                    });
-        }
-        
-        function cleanCodeLine(line) {
-          return line.replace(/[\r\n]+/g, '').trimStart();
-        }
-        function removeLeadingWhitespace(code) {
-            const lines = code.split('\n');
-            const cleanedLines = lines.map(cleanCodeLine);
-            return cleanedLines.join('\n');
-        }
-
-        function copyText(text) {
-            navigator.clipboard.writeText(text)
-                .then(() => {
-                    alert('Text copied: ' + text);
-                })
-                .catch(err => {
-                    console.error('Failed to copy text: ', err);
-                });
-        }
-
-        function toggleSound(event) {
-           
-            isSoundOn = !isSoundOn;
-           
-            if (isSoundOn) {
-                soundIcon.src = "https://0x0.st/s/eq_Qyks9rcJhF-MSFnKgAA/8H5O.png";
-                backgroundMusic.currentTime = musicStartTime;
-                backgroundMusic.play();
+    <img src="https://0x0.st/s/BYUCRyScF7joBPlyEdE3yg/8H5A.jpg" class="profile-photo" alt="Profile Photo">
+    <img src="https://i.pinimg.com/originals/c5/15/2c/c5152cb4a5f17d4318858f625740e98d.gif" class="image-background" alt="Profile Photo">
+     <div class="line-left"></div>
+     <div class="line-right"></div>
+    <h1 class="profile-title">About me:</h1>
+     <p class="profile-text">
+        About me: <br>Nickname: Arion,Arioncheck <br>Hobbie: Coding <br>Country: Russia <br><br>Active in these chats: <br>🍇 GrapeCrack | Chat 🍇 <br>Hikka -offtop-chat <br><br>Userbot: <br>This is Рikka <br><br>I play these games: <br>Dota 2, DDNet
+     </p>
+ </div>
+ </div>
+ <audio id="background-music" loop>
+ <source src="amamam.mp3" type="audio/mpeg">
+ </audio>
+ <script>
+ const timeContainer = document.querySelector('.time-container');
+ const soundControlContainer = document.querySelector('.sound-control-container');
+ const bioContainer = document.getElementById('bio-container');
+ let isSoundOn = false;
+ let musicStartTime = 0;
+ const backgroundMusic = document.getElementById('background-music');
+  const soundIcon = document.getElementById('sound-icon');
+ 
+ function updateTime() {
+     const now = new Date();
+     const timeString = now.toLocaleTimeString();
+     document.getElementById('current-time').textContent = timeString;
+ }
+ 
+ updateTime();
+ setInterval(updateTime, 1000);
+ 
+ 
+         function toggleSound(event) {
+            
+             isSoundOn = !isSoundOn;
+            
+             if (isSoundOn) {
+                 soundIcon.src = "https://0x0.st/s/eq_Qyks9rcJhF-MSFnKgAA/8H5O.png";
+                 backgroundMusic.currentTime = musicStartTime;
+                 backgroundMusic.play();
             } else {
                 soundIcon.src = "https://0x0.st/s/-q109pyaDBT7eN_218LYLA/8H5f.png";
                 backgroundMusic.pause();
                 musicStartTime = backgroundMusic.currentTime;
             }
         }
-
-        burgerMenu.addEventListener('mousedown', () => {
-            burgerMenu.style.transform = 'scale(1.05)';
-            burgerMenu.style.userSelect = 'none';
-            burgerMenu.style.webkitUserSelect = 'none';
-        });
-        burgerMenu.addEventListener('mouseup', () => {
-            burgerMenu.style.transform = 'scale(1)';
-        });
-        burgerMenu.addEventListener('touchstart', () => {
-            burgerMenu.style.transform = 'scale(1.05)';
-              burgerMenu.style.userSelect = 'none';
-            burgerMenu.style.webkitUserSelect = 'none';
-        });
-        burgerMenu.addEventListener('touchend', () => {
-            burgerMenu.style.transform = 'scale(1)';
-        });
-
 
         timeContainer.addEventListener('mousedown', () => {
             timeContainer.style.transform = 'scale(1.05)';
@@ -540,7 +256,12 @@ function showModules() {
         soundControlContainer.addEventListener('touchend', () => {
             soundControlContainer.style.transform = 'scale(1)';
         });
-
+           soundControlContainer.addEventListener('keydown', function(event) {
+                if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                    toggleSound();
+              }
+           });
         window.addEventListener('DOMContentLoaded',() => {
             if(isSoundOn)
             {
